@@ -8,11 +8,17 @@
 </head>
 <body>
     <style>
+        /* put a bottom margin to the list */
         LI { 
             border-bottom: 1px dotted #EEE;
             margin-bottom: 10px; 
         }
+        /* put a little left margin onto each button within the list */
+        LI BUTTON { 
+            margin-left: 5px;
+        }
     </style>
+
     <div class='container'>
         <h1>To Do List</h1>
 
@@ -105,6 +111,9 @@
         }
         renderList();
 
+        // note of we did use the "onClick" in the renderList, we would have had to use 
+        // *event delegation* on the UL#todolist , as each rewriting of the LI list would erase previous event-listeners
+        // on individual list elements.
     </script>
 </body>
 </html>
