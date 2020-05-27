@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
+    <style>
+        LI { 
+            border-bottom: 1px dotted #EEE;
+            margin-bottom: 10px; 
+        }
+    </style>
     <div class='container'>
         <h1>To Do List</h1>
 
@@ -36,10 +42,26 @@
             const item = event.target.parentElement;
             if( item.id ){
                 // edit the element
-                console.log( `item.id=${item.id}, item=${item.textContent}` );
-                editItemEl.value = item.textContent.slice(0,-5);
+                console.log( `item.id=${item.id}, item=${item.innerHTML}` );
+                // getting just the text in the LI is done with this rather cryptic thing
+                // see: https://www.designcise.com/web/tutorial/how-to-get-html-elements-text-excluding-children-using-jquery-and-javascript
+                editItemEl.value = item.childNodes[0].nodeValue.trim();
                 editItemEl.dataset.idx = item.id;
                 editLabelEl.textContent = "Save";
+            }
+        }
+
+        function deleteItem( event ){
+            event.preventDefault();
+
+            const item = event.target.parentElement;
+            if( item.id && confirm( 'Are you sure you want to delete it?' ) ){
+                delete todoList[item.id];
+
+                // save to local storage
+                localStorage.todoList = JSON.stringify(todoList);
+
+                renderList();
             }
         }
 
@@ -71,7 +93,11 @@
             todoList.forEach( 
                 function( item, index ){
                     todoListEl.innerHTML += 
-                    `<li id='${index}'>${item} <button onClick='editItem(event)'>Edit</button>`;
+                    `<li id='${index}'>
+                        ${item} 
+                        <button onClick='deleteItem(event)' class='btn btn-sm btn-outline-danger float-right'>X</button>
+                        <button onClick='editItem(event)' class='btn btn-sm btn-outline-secondary float-right'>Edit</button>
+                    </li>`;
                 }
             )
         }
