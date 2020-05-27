@@ -56,7 +56,9 @@
 
             const item = event.target.parentElement;
             if( item.id && confirm( 'Are you sure you want to delete it?' ) ){
-                delete todoList[item.id];
+                //delete todoList[item.id];  <-- this leaves a 'null' entry
+                // stackoverflowed "removing item from array javascript", found: https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+                todoList.splice(item.id, 1); 
 
                 // save to local storage
                 localStorage.todoList = JSON.stringify(todoList);
