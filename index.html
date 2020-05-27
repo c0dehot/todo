@@ -13,17 +13,65 @@
         <ul id='todolist'>
         </ul>
 
-        <input> [Add]
+        <hr />
+        <div id="testDiv" data-id="stuff" data-info="more info"></div>
+        <form>
+            <div class="input-group mb-3">
+                <input id="editItem" type="text" data-idx="" class="form-control" placeholder="Item">
+                <div class="input-group-append">
+                  <button onClick="saveItem(event)" class="btn btn-primary" type="button" id="editLabel">Add</button>
+                </div>
+            </div>
+        </form>
     </div>
     <script>
-        let todoList = [ "Get the milk" ];
+        let todoList = localStorage.todoList ? JSON.parse(localStorage.todoList) : [ "Get the milk" ];
         const todoListEl = document.querySelector('#todolist');
+        const editLabelEl = document.querySelector('#editLabel');
+        const editItemEl = document.querySelector('#editItem');
+
+        function editItem( event ){
+            event.preventDefault();
+            
+            const item = event.target.parentElement;
+            if( item.id ){
+                // edit the element
+                console.log( `item.id=${item.id}, item=${item.textContent}` );
+                editItemEl.value = item.textContent.slice(0,-5);
+                editItemEl.dataset.idx = item.id;
+                editLabelEl.textContent = "Save";
+            }
+        }
+
+        function saveItem( event ){
+            event.preventDefault();
+
+            // check if it's new or edited
+            const idx = editItemEl.dataset.idx;
+            if( idx ){
+                todoList[idx] = editItemEl.value;
+            } else {
+                // add an item to the list
+                todoList.push( editItemEl.value );
+            }
+            // save to local storage
+            localStorage.todoList = JSON.stringify(todoList);
+
+            // reset to add mode
+            editLabelEl.textContent = "Add";
+            editItemEl.dataset.idx = "";
+            editItemEl.value = "";
+
+            renderList();
+        }
 
         function renderList(){
+            todoListEl.innerHTML = '';
+
             todoList.forEach( 
                 function( item, index ){
                     todoListEl.innerHTML += 
-                    `<li id='${index}'>${item} <button>Edit</button>`;
+                    `<li id='${index}'>${item} <button onClick='editItem(event)'>Edit</button>`;
                 }
             )
         }
