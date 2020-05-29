@@ -5,6 +5,8 @@
     <meta name="viewport" content="width='device-width', initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src='https://code.jquery.com/jquery-3.5.1.min.js'></script>
 </head>
 <body>
     <style>
@@ -26,7 +28,7 @@
         </ul>
 
         <hr />
-        <div id="testDiv" data-id="stuff" data-info="more info"></div>
+
         <form>
             <div class="input-group mb-3">
                 <input id="editItem" type="text" data-idx="" class="form-control" placeholder="Item">
@@ -79,10 +81,10 @@
             // check if it's new or edited
             const idx = editItemEl.dataset.idx;
             if( idx ){
-                todoList[idx] = editItemEl.value;
+                todoList[idx] = editItemEl.value.trim();
             } else {
                 // add an item to the list
-                todoList.push( editItemEl.value );
+                todoList.push( editItemEl.value.trim() );
             }
             // save to local storage
             localStorage.todoList = JSON.stringify(todoList);
@@ -98,22 +100,23 @@
         function renderList(){
             todoListEl.innerHTML = '';
 
-            todoList.forEach( 
-                function( item, index ){
-                    todoListEl.innerHTML += 
-                    `<li id='${index}'>
-                        ${item} 
-                        <button onClick='deleteItem(event)' class='btn btn-sm btn-outline-danger float-right'>X</button>
-                        <button onClick='editItem(event)' class='btn btn-sm btn-outline-secondary float-right'>Edit</button>
-                    </li>`;
-                }
-            )
+            function addRow( item, index ){
+                todoListEl.innerHTML += 
+                `<li id='${index}'>
+                    ${item} 
+                    <button onClick='deleteItem(event)' class='btn btn-sm btn-outline-danger float-right'>X</button>
+                    <button onClick='editItem(event)' class='btn btn-sm btn-outline-secondary float-right'>Edit</button>
+                </li>`;
+            }
+
+            todoList.forEach( addRow );
         }
         renderList();
 
         // note of we did use the "onClick" in the renderList, we would have had to use 
         // *event delegation* on the UL#todolist , as each rewriting of the LI list would erase previous event-listeners
         // on individual list elements.
+        // document.querySelector('#todolist').addEventListener( 'click', actionButton );
     </script>
 </body>
 </html>
