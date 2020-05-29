@@ -9,7 +9,7 @@
     <script src='https://code.jquery.com/jquery-3.5.1.min.js'></script>
 </head>
 <body>
-    <style>
+    <!-- <style>
         /* put a bottom margin to the list */
         LI { 
             border-bottom: 1px dotted #EEE;
@@ -19,14 +19,18 @@
         LI BUTTON { 
             margin-left: 5px;
         }
-    </style>
+    </style> -->
 
     <div class='container'>
-        <h1>To Do List</h1>
+        <h1>Calendar List</h1>
 
-        <ul id='todolist'>
-        </ul>
-
+        <ul id='todolist' class="list-group">
+            <li class="list-group-item">9:00 AM Wake up</li>
+            <li class="list-group-item">10:00 AM Do stuff</li>
+            <li class="list-group-item">11:00 AM </li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
         <hr />
 
         <form>
@@ -39,7 +43,12 @@
         </form>
     </div>
     <script>
-        let todoList = localStorage.todoList ? JSON.parse(localStorage.todoList) : [ "Get the milk" ];
+        let todoList = localStorage.todoList ? 
+            JSON.parse(localStorage.todoList) : 
+            { "9am": "stuff",
+              "10am": "more stuff",
+              "12pm": "more stuff",
+              "5pm": "5pm stuff " };
         const todoListEl = document.querySelector('#todolist');
         const editLabelEl = document.querySelector('#editLabel');
         const editItemEl = document.querySelector('#editItem');
@@ -100,16 +109,17 @@
         function renderList(){
             todoListEl.innerHTML = '';
 
-            function addRow( item, index ){
+            function addRow( time, index ){
+                const item = todoList[time]
                 todoListEl.innerHTML += 
-                `<li id='${index}'>
-                    ${item} 
+                `<li id='${time}' class='list-group-item'>
+                    ${time}: ${item} 
                     <button onClick='deleteItem(event)' class='btn btn-sm btn-outline-danger float-right'>X</button>
                     <button onClick='editItem(event)' class='btn btn-sm btn-outline-secondary float-right'>Edit</button>
                 </li>`;
             }
 
-            todoList.forEach( addRow );
+            Object.keys(todoList).forEach( addRow );
         }
         renderList();
 
