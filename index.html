@@ -25,12 +25,8 @@
         <h1>Calendar List</h1>
 
         <ul id='todolist' class="list-group">
-            <li class="list-group-item">9:00 AM Wake up</li>
-            <li class="list-group-item">10:00 AM Do stuff</li>
-            <li class="list-group-item">11:00 AM </li>
-            <li class="list-group-item">Porta ac consectetur ac</li>
-            <li class="list-group-item">Vestibulum at eros</li>
-          </ul>
+            <!-- list go here -->
+        </ul>
         <hr />
 
         <form>
@@ -45,10 +41,10 @@
     <script>
         let todoList = localStorage.todoList ? 
             JSON.parse(localStorage.todoList) : 
-            { "9am": "stuff",
-              "10am": "more stuff",
-              "12pm": "more stuff",
-              "5pm": "5pm stuff " };
+            { "_9am": "stuff",
+              "_10am": "more stuff",
+              "_12pm": "more stuff",
+              "_5pm": "5pm stuff " };
         const todoListEl = document.querySelector('#todolist');
         const editLabelEl = document.querySelector('#editLabel');
         const editItemEl = document.querySelector('#editItem');
@@ -62,7 +58,8 @@
                 console.log( `item.id=${item.id}, item=${item.innerHTML}` );
                 // getting just the text in the LI is done with this rather cryptic thing
                 // see: https://www.designcise.com/web/tutorial/how-to-get-html-elements-text-excluding-children-using-jquery-and-javascript
-                editItemEl.value = item.childNodes[0].nodeValue.trim();
+                editItemEl.value = item.children[0].textContent.trim(); //item.childNodes[1].nodeValue.trim();
+                //console.log( ` --- ${editItemEl.value}` );
                 editItemEl.dataset.idx = item.id;
                 editLabelEl.textContent = "Save";
             }
@@ -74,8 +71,11 @@
             const item = event.target.parentElement;
             if( item.id && confirm( 'Are you sure you want to delete it?' ) ){
                 //delete todoList[item.id];  <-- this leaves a 'null' entry
+                // for ARRAY version
                 // stackoverflowed "removing item from array javascript", found: https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
-                todoList.splice(item.id, 1); 
+                // todoList.splice(item.id, 1); 
+                // for OBJECT version
+                todoList[item.id] = "";
 
                 // save to local storage
                 localStorage.todoList = JSON.stringify(todoList);
@@ -93,6 +93,7 @@
                 todoList[idx] = editItemEl.value.trim();
             } else {
                 // add an item to the list
+                // this is ONLY for arrays, won't work for the object examples
                 todoList.push( editItemEl.value.trim() );
             }
             // save to local storage
@@ -105,7 +106,7 @@
 
             renderList();
         }
-
+        
         function renderList(){
             todoListEl.innerHTML = '';
 
@@ -113,14 +114,15 @@
                 const item = todoList[time]
                 todoListEl.innerHTML += 
                 `<li id='${time}' class='list-group-item'>
-                    ${time}: ${item} 
+                    ${time}: <span>${item}</span> 
                     <button onClick='deleteItem(event)' class='btn btn-sm btn-outline-danger float-right'>X</button>
                     <button onClick='editItem(event)' class='btn btn-sm btn-outline-secondary float-right'>Edit</button>
                 </li>`;
             }
 
             Object.keys(todoList).forEach( addRow );
-        }
+        }     
+
         renderList();
 
         // note of we did use the "onClick" in the renderList, we would have had to use 
